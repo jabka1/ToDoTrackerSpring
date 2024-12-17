@@ -1,9 +1,7 @@
 package team.todotrackerspring.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import team.todotrackerspring.model.User;
 import team.todotrackerspring.service.TaskService;
@@ -21,14 +19,6 @@ public class TaskController {
     @Autowired
     UserService userService;
 
-    @GetMapping
-    public String listTasks(@AuthenticationPrincipal User user, Model model) {
-        model.addAttribute("tasks", taskService.getAllTasks(user.getUsername()));
-        model.addAttribute("today", LocalDate.now());
-        return "task/list";
-    }
-
-
     @PostMapping("/create")
     public String createTask(
             @RequestParam String name,
@@ -43,6 +33,12 @@ public class TaskController {
     @PostMapping("/markCompleted")
     public String markTaskAsCompleted(@RequestParam Long taskId) {
         taskService.markTaskAsCompleted(taskId);
+        return "redirect:/home";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteTask(@PathVariable Long id) {
+        taskService.deleteTask(id);
         return "redirect:/home";
     }
 
