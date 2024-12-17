@@ -1,6 +1,7 @@
 package team.todotrackerspring.config;
 
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import team.todotrackerspring.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

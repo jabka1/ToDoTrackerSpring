@@ -3,11 +3,14 @@ package team.todotrackerspring.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import team.todotrackerspring.model.User;
+import team.todotrackerspring.service.TaskService;
 import team.todotrackerspring.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,6 +22,9 @@ public class AuthController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private TaskService taskService;
 
     private static final String PASSWORD_PATTERN = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!\"#$%&'()*+,-./:;<=>?@\\[\\]^_`{|}~]).{8,}$";
     private static final Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
@@ -60,6 +66,9 @@ public class AuthController {
     public String home(Model model) {
         User user = userService.getCurrentUser();
         model.addAttribute("user", user);
+        model.addAttribute("tasks", taskService.getAllTasks(user.getUsername()));
+        model.addAttribute("today", LocalDate.now());
         return "home";
     }
+
 }
