@@ -1,5 +1,7 @@
 package team.todotrackerspring.config;
 
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import team.todotrackerspring.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +33,7 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .defaultSuccessUrl("/home", true)
                         .permitAll()
+                        .failureHandler(authenticationFailureHandler())
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
@@ -39,6 +42,16 @@ public class SecurityConfig {
                 );
 
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return (request, response, exception) -> {
+                if (exception instanceof BadCredentialsException) {
+                request.getSession().setAttribute("error", "Invalid username or password.");
+            }
+            response.sendRedirect("/login?error=true");
+        };
     }
 
     @Bean

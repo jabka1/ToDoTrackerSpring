@@ -1,5 +1,6 @@
 package team.todotrackerspring.service;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import team.todotrackerspring.model.User;
 import team.todotrackerspring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,5 +36,14 @@ public class UserService implements UserDetailsService {
                 .password(user.getPassword())
                 .roles("USER")
                 .build();
+    }
+
+    public boolean isUsernameTaken(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    public User getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 }
