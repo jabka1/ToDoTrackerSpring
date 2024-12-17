@@ -2,6 +2,7 @@ package team.todotrackerspring.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import team.todotrackerspring.decorator.sorting.*;
 import team.todotrackerspring.model.User;
 import team.todotrackerspring.service.TaskService;
 import team.todotrackerspring.service.UserService;
@@ -63,12 +64,26 @@ public class AuthController {
     }
 
     @GetMapping("/home")
-    public String home(Model model) {
+    public String home(@RequestParam(defaultValue = "none") String sortBy, Model model) {
         User user = userService.getCurrentUser();
         model.addAttribute("user", user);
-        model.addAttribute("tasks", taskService.getAllTasks(user.getUsername()));
         model.addAttribute("today", LocalDate.now());
+        model.addAttribute("sortBy", sortBy);
+
+        TaskSortingDecorator sortingDecorator = getSortingDecorator(sortBy);
+        model.addAttribute("tasks", taskService.getAllTasksSorted(user.getUsername(), sortingDecorator));
+
         return "home";
+    }
+
+    private TaskSortingDecorator getSortingDecorator(String sortBy) {
+        return switch (sortBy) {
+            case "name" -> new SortByNameDecorator();
+            case "deadline" -> new SortByDeadlineDecorator();
+            case "priority" -> new SortByPriorityDecorator();
+            case "completed" -> new SortByCompletionDecorator();
+            default -> null;
+        };
     }
 
 }
