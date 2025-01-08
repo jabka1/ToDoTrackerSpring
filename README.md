@@ -30,7 +30,7 @@ ToDoTracker is a web task management application built on Spring Boot. Users can
 ### 1. Clone the repository
 ```bash
 git clone https://github.com/jabka1/ToDoTrackerSpring
-cd SecureLoginSystemSpring
+cd ToDoTrackerSpring
 ```
 
 ### 2. Configure the Database
